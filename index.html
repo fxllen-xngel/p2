@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player Two?</title>
+<style>
+body{margin:0;font-family:'Courier New',monospace;background:black;color:#00eaff;text-align:center;overflow:hidden}
+h1{margin-top:15vh;font-size:2.2em;text-shadow:0 0 8px #00eaff,0 0 16px #ff00ff;animation:glitch 1s infinite;z-index:2;position:relative;padding:0 10px}
+@keyframes glitch{0%{text-shadow:2px 2px #ff00ff}50%{text-shadow:-2px -2px #00eaff}100%{text-shadow:2px -2px #ff00ff}}
+@keyframes flicker{0%{opacity:.25;filter:brightness(1)}50%{opacity:.5;filter:brightness(1.4)}100%{opacity:.3;filter:brightness(1)}}
+.buttons{margin-top:30px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:15px;z-index:2;position:relative}
+button{font-size:1.2em;padding:12px 22px;border:none;cursor:pointer;border-radius:12px;transition:transform .2s ease}
+button:active{transform:scale(0.95)}
+#yesBtn{background:#00eaff;color:black;width:70%}
+#noBtn{background:#ff0077;color:white;width:70%;position:relative}
+#message{margin-top:25px;font-size:2.2em;font-weight:700;display:none;color:#ff00ff;z-index:2;position:relative;padding:0 15px;text-shadow:0 0 10px #ff00ff,0 0 20px #00eaff}
+.graffiti{position:absolute;opacity:.3;font-weight:bold;transform:rotate(var(--rot));pointer-events:none;font-size:1.2em;text-shadow:0 0 6px currentColor,0 0 12px currentColor,0 0 18px currentColor}
+.symbol{position:absolute;opacity:.35;pointer-events:none;filter:drop-shadow(0 0 6px #00eaff) drop-shadow(0 0 10px #ff00ff)}
+.floating-text{position:absolute;color:#00eaff;opacity:.18;font-size:1.3em;white-space:nowrap;animation:float linear infinite}
+@keyframes float{from{transform:translateY(100vh)}to{transform:translateY(-10vh)}}
+.flash{position:fixed;top:0;left:0;width:100%;height:100%;background:white;opacity:0;pointer-events:none}
+.shake{animation:shake .3s}
+@keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(3px,-3px)}50%{transform:translate(-3px,3px)}75%{transform:translate(3px,3px)}100%{transform:translate(0,0)}}
+@media(min-width:768px){
+h1{font-size:3em;margin-top:18vh}
+.buttons{flex-direction:row;gap:25px}
+button{font-size:1.5em}
+#yesBtn,#noBtn{width:auto}
+}
+</style>
+</head>
+<body>
+<div class="flash" id="flash"></div>
+<h1 id="title">Will you be my Player Two?</h1>
+<div class="buttons">
+<button id="yesBtn">Yes</button>
+<button id="noBtn">No</button>
+</div>
+<div id="message">You just made my world complete 💙</div>
+<script>
+const noBtn=document.getElementById("noBtn")
+
+function moveNoButton(){
+document.body.classList.add("shake")
+setTimeout(()=>document.body.classList.remove("shake"),200)
+const padding=100
+const x=Math.random()*(window.innerWidth-padding)
+const y=Math.random()*(window.innerHeight-padding)
+noBtn.style.position="fixed"
+noBtn.style.left=x+"px"
+noBtn.style.top=y+"px"
+}
+
+noBtn.addEventListener("mouseover",moveNoButton)
+noBtn.addEventListener("touchstart",moveNoButton)
+noBtn.addEventListener("click",(e)=>{e.preventDefault();moveNoButton()})
+
+document.getElementById("yesBtn").onclick=()=>{
+const flash=document.getElementById("flash")
+flash.style.opacity=1
+setTimeout(()=>flash.style.opacity=0,200)
+document.getElementById("title").innerText="You chose chaos. You chose me."
+document.getElementById("message").style.display="block"
+}
+
+function applyRandomFlicker(el){
+const delay=Math.random()*2
+const duration=0.15+Math.random()*0.75
+el.style.animation=`flicker ${duration}s infinite alternate`
+el.style.animationDelay=`${delay}s`
+}
+
+const graffitiSet=["JINX","POW","BOOM","X","XX","!!!","JINX WAS HERE","HA HA","BANG","ZAP"]
+
+function createGraffiti(){
+const g=document.createElement("div")
+g.className="graffiti"
+g.innerText=graffitiSet[Math.floor(Math.random()*graffitiSet.length)]
+g.style.top=Math.random()*100+"vh"
+g.style.left=Math.random()*100+"vw"
+g.style.fontSize=(1.2+Math.random()*2.2)+"em"
+g.style.color=Math.random()>0.5?"#ff00ff":"#00eaff"
+g.style.setProperty('--rot',(Math.random()*60-30)+'deg')
+document.body.appendChild(g)
+applyRandomFlicker(g)
+}
+
+for(let i=0;i<50;i++)createGraffiti()
+
+const svgSymbols=[
+`<svg width="40" height="40"><circle cx="20" cy="20" r="16" stroke="#00eaff" stroke-width="2" fill="none"/><circle cx="14" cy="16" r="2" fill="#ff00ff"/><circle cx="26" cy="16" r="2" fill="#ff00ff"/><path d="M14 26 Q20 32 26 26" stroke="#ff00ff" stroke-width="2" fill="none"/></svg>`,
+`<svg width="40" height="40"><polygon points="20,4 36,36 4,36" stroke="#ff00ff" stroke-width="2" fill="none"/></svg>`,
+`<svg width="40" height="40"><path d="M8 20 L32 20 M20 8 L20 32" stroke="#00eaff" stroke-width="2"/></svg>`
+]
+
+function createSymbol(){
+const div=document.createElement("div")
+div.className="symbol"
+div.innerHTML=svgSymbols[Math.floor(Math.random()*svgSymbols.length)]
+div.style.top=Math.random()*100+"vh"
+div.style.left=Math.random()*100+"vw"
+div.style.transform=`rotate(${Math.random()*360}deg) scale(${0.6+Math.random()*0.6})`
+document.body.appendChild(div)
+applyRandomFlicker(div)
+}
+
+for(let i=0;i<20;i++)createSymbol()
+
+const lines=["You think I'm crazy?","Let's blow something up!","Smile. It's showtime.","Oops... did I do that?","You can't get rid of me.","I'm not alone...","Hehehe...","Ready or not."]
+
+function createFloatingText(){
+const text=document.createElement("div")
+text.className="floating-text"
+text.innerText=lines[Math.floor(Math.random()*lines.length)]
+text.style.left=Math.random()*100+"vw"
+text.style.animationDuration=(5+Math.random()*6)+"s"
+document.body.appendChild(text)
+setTimeout(()=>text.remove(),12000)
+}
+
+setInterval(createFloatingText,1200)
+</script>
+</body>
+</html>
