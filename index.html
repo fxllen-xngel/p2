@@ -120,6 +120,35 @@ setTimeout(()=>text.remove(),12000)
 }
 
 setInterval(createFloatingText,1200)
+const voiceFiles = [
+    "Jinx1.ogg",
+    "Jinx2.ogg",
+    "Jinx3.ogg",
+    "Jinx4.ogg",
+    "Jinx5.ogg"
+];
+
+let currentAudio = null;
+
+function playRandomVoiceLine() {
+    const randomFile = voiceFiles[Math.floor(Math.random() * voiceFiles.length)];
+
+    currentAudio = new Audio(randomFile);
+    currentAudio.volume = 0.6;
+
+    currentAudio.playbackRate = 0.9 + Math.random() * 0.2;
+
+    currentAudio.onended = () => {
+        setTimeout(playRandomVoiceLine, 1000 + Math.random() * 3000);
+    };
+
+    currentAudio.play();
+}
+document.addEventListener("click", () => {
+    if (!currentAudio) {
+        playRandomVoiceLine();
+    }
+}, { once: true });
 </script>
 </body>
 </html>
